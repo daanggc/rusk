@@ -525,29 +525,31 @@ fn execute(
 
     // Deploy if this is a deployment transaction
     if let Some(deploy) = tx.payload().contract_deploy() {
-        let bytecode_charge =
-            deploy.bytecode.bytes.len() as u64 * GAS_PER_DEPLOY_BYTE;
-        let min_gas_limit = receipt.gas_spent + bytecode_charge;
-        let hash = blake3::hash(deploy.bytecode.bytes.as_slice());
-        if tx.payload().fee.gas_limit < min_gas_limit {
-            receipt.data = Err(OutOfGas);
-        } else if hash != deploy.bytecode.hash {
-            receipt.data = Err(Panic("failed bytecode hash check".into()))
-        } else {
-            let result = session.deploy_raw(
-                None,
-                deploy.bytecode.bytes.as_slice(),
-                deploy.constructor_args.clone(),
-                deploy.owner.clone(),
-                tx.payload().fee.gas_limit - receipt.gas_spent,
-            );
-            match result {
-                Ok(_) => {
-                    receipt.gas_spent += bytecode_charge;
-                }
-                Err(err) => {
-                    info!("Tx caused deployment error {err:?}");
-                    receipt.data = Err(Panic("failed deployment".into()))
+        if !receipt.data.is_err() {
+            let bytecode_charge =
+                deploy.bytecode.bytes.len() as u64 * GAS_PER_DEPLOY_BYTE;
+            let min_gas_limit = receipt.gas_spent + bytecode_charge;
+            let hash = blake3::hash(deploy.bytecode.bytes.as_slice());
+            if tx.payload().fee.gas_limit < min_gas_limit {
+                receipt.data = Err(OutOfGas);
+            } else if hash != deploy.bytecode.hash {
+                receipt.data = Err(Panic("failed bytecode hash check".into()))
+            } else {
+                let result = session.deploy_raw(
+                    None,
+                    deploy.bytecode.bytes.as_slice(),
+                    deploy.constructor_args.clone(),
+                    deploy.owner.clone(),
+                    tx.payload().fee.gas_limit - receipt.gas_spent,
+                );
+                match result {
+                    Ok(_) => {
+                        receipt.gas_spent += bytecode_charge;
+                    }
+                    Err(err) => {
+                        info!("Tx caused deployment error {err:?}");
+                        receipt.data = Err(Panic("failed deployment".into()))
+                    }
                 }
             }
         }
