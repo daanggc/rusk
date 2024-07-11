@@ -46,7 +46,8 @@ const BOB_INIT_VALUE: u8 = 5;
 fn initial_state<P: AsRef<Path>>(dir: P, deploy_bob: bool) -> Result<Rusk> {
     let dir = dir.as_ref();
 
-    let snapshot = toml::from_str(include_str!("../config/contract_pays.toml"))
+    let snapshot =
+        toml::from_str(include_str!("../config/contract_deployment.toml"))
         .expect("Cannot deserialize config");
 
     let (_vm, _commit_id) = state::deploy(dir, &snapshot, |session| {
@@ -100,7 +101,6 @@ fn make_and_execute_transaction_deploy(
     bytecode: impl AsRef<[u8]>,
     gas_limit: u64,
     init_value: u8,
-    should_err: bool,
 ) {
     let mut rng = StdRng::seed_from_u64(0xcafe);
 
@@ -125,16 +125,9 @@ fn make_and_execute_transaction_deploy(
         )
         .expect("Making transaction should succeed");
 
-    let expected = if should_err {
-        ExecuteResult {
-            discarded: 0,
-            executed: 0,
-        }
-    } else {
-        ExecuteResult {
+    let expected = ExecuteResult {
             discarded: 0,
             executed: 1,
-        }
     };
 
     let result = generator_procedure(
@@ -145,15 +138,13 @@ fn make_and_execute_transaction_deploy(
         vec![],
         Some(expected),
     );
-    if !should_err {
-        let spent_transactions =
-            result.expect("generator procedure should succeed");
-        let mut spent_transactions = spent_transactions.into_iter();
-        let tx = spent_transactions
-            .next()
-            .expect("There should be one spent transactions");
-        assert!(tx.err.is_none(), "Transaction should succeed");
-    }
+    let spent_transactions =
+        result.expect("generator procedure should succeed");
+    let mut spent_transactions = spent_transactions.into_iter();
+    let tx = spent_transactions
+        .next()
+        .expect("There should be one spent transactions");
+    assert!(tx.err.is_none(), "Transaction should succeed");
 }
 
 fn assert_bob_contract_is_not_deployed(
@@ -238,14 +229,15 @@ pub async fn contract_deploy() {
         bob_bytecode,
         GAS_LIMIT,
         BOB_INIT_VALUE,
-        false,
     );
     let after_balance = wallet
         .get_balance(0)
         .expect("Getting wallet's balance should succeed")
         .value;
     assert_bob_contract_is_deployed(&path, &rusk, &contract_id);
-    println!("total cost={}", before_balance - after_balance);
+    let funds_spent = before_balance - after_balance;
+    println!("funds spent={}", funds_spent);
+    assert!(funds_spent < GAS_LIMIT * GAS_PRICE);
 }
 
 /// We deploy a contract which is already deployed
@@ -289,13 +281,14 @@ pub async fn contract_already_deployed() {
         bob_bytecode,
         GAS_LIMIT,
         BOB_INIT_VALUE,
-        true,
     );
     let after_balance = wallet
         .get_balance(0)
         .expect("Getting wallet's balance should succeed")
         .value;
-    println!("total cost={}", before_balance - after_balance);
+    let funds_spent = before_balance - after_balance;
+    println!("funds spent={}", funds_spent);
+    assert_eq!(funds_spent, GAS_LIMIT * GAS_PRICE);
 }
 
 /// We deploy a contract with a corrupted bytecode
@@ -342,13 +335,14 @@ pub async fn contract_deploy_corrupted_bytecode() {
         bob_bytecode,
         GAS_LIMIT,
         BOB_INIT_VALUE,
-        true,
     );
     let after_balance = wallet
         .get_balance(0)
         .expect("Getting wallet's balance should succeed")
         .value;
-    println!("total cost={}", before_balance - after_balance);
+    let funds_spent = before_balance - after_balance;
+    println!("funds spent={}", funds_spent);
+    assert_eq!(funds_spent, GAS_LIMIT * GAS_PRICE);
 }
 
 /// We deploy different contracts and compare the charge
@@ -394,7 +388,6 @@ pub async fn contract_deploy_charge() {
         bob_bytecode,
         GAS_LIMIT,
         BOB_INIT_VALUE,
-        false,
     );
     let after_bob_balance = wallet
         .get_balance(0)
@@ -406,7 +399,6 @@ pub async fn contract_deploy_charge() {
         license_bytecode,
         GAS_LIMIT,
         0,
-        false,
     );
     let after_license_balance = wallet
         .get_balance(0)
