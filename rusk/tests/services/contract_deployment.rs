@@ -48,7 +48,7 @@ fn initial_state<P: AsRef<Path>>(dir: P, deploy_bob: bool) -> Result<Rusk> {
 
     let snapshot =
         toml::from_str(include_str!("../config/contract_deployment.toml"))
-        .expect("Cannot deserialize config");
+            .expect("Cannot deserialize config");
 
     let (_vm, _commit_id) = state::deploy(dir, &snapshot, |session| {
         let alice_bytecode = include_bytes!(
@@ -126,8 +126,8 @@ fn make_and_execute_transaction_deploy(
         .expect("Making transaction should succeed");
 
     let expected = ExecuteResult {
-            discarded: 0,
-            executed: 1,
+        discarded: 0,
+        executed: 1,
     };
 
     let result = generator_procedure(
@@ -190,7 +190,6 @@ fn assert_bob_contract_is_deployed(
 
 /// We deploy a contract
 #[tokio::test(flavor = "multi_thread")]
-#[ignore]
 pub async fn contract_deploy() {
     logger();
 
@@ -242,7 +241,6 @@ pub async fn contract_deploy() {
 
 /// We deploy a contract which is already deployed
 #[tokio::test(flavor = "multi_thread")]
-#[ignore]
 pub async fn contract_already_deployed() {
     logger();
 
@@ -293,7 +291,6 @@ pub async fn contract_already_deployed() {
 
 /// We deploy a contract with a corrupted bytecode
 #[tokio::test(flavor = "multi_thread")]
-#[ignore]
 pub async fn contract_deploy_corrupted_bytecode() {
     logger();
 
@@ -404,9 +401,10 @@ pub async fn contract_deploy_charge() {
         .get_balance(0)
         .expect("Getting wallet's balance should succeed")
         .value;
-    println!("bob deployment cost={}", before_balance - after_bob_balance);
-    println!(
-        "license deployment cost={}",
-        after_bob_balance - after_license_balance
-    );
+    let bob_deployment_cost = before_balance - after_bob_balance;
+    let license_deployment_cost = after_bob_balance - after_license_balance;
+    println!("bob deployment cost={}", bob_deployment_cost);
+    println!("license deployment cost={}", license_deployment_cost);
+    assert!(license_deployment_cost > bob_deployment_cost);
+    assert!(license_deployment_cost - bob_deployment_cost > 10_000_000);
 }

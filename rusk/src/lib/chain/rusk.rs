@@ -43,6 +43,8 @@ pub static DUSK_KEY: LazyLock<StakePublicKey> = LazyLock::new(|| {
         .expect("Dusk consensus public key to be valid")
 });
 
+const GAS_PER_DEPLOY_BYTE: u64 = 100;
+
 impl Rusk {
     pub fn new<P: AsRef<Path>>(
         dir: P,
@@ -521,29 +523,37 @@ fn execute(
     )?;
 
     // Deploy if this is a deployment transaction
-    let mut deploy_error = false;
     if let Some(deploy) = tx.payload().contract_deploy() {
         let hash = blake3::hash(deploy.bytecode.bytes.as_slice());
         if hash != deploy.bytecode.hash {
             info!("Tx caused deployment bytecode hash error");
-            deploy_error = true;
-        }
-        let result = session.deploy_raw(
-            None,
-            deploy.bytecode.bytes.as_slice(),
-            deploy.constructor_args.clone(),
-            deploy.owner.clone(),
-            tx.payload().fee.gas_limit,
-        );
-        if let Some(err) = result.err() {
-            info!("Tx caused deployment error {err:?}");
-            deploy_error = true;
+            // Ensure all gas is consumed if bytecode check failed
+            receipt.gas_spent = receipt.gas_limit;
+        } else {
+            let result = session.deploy_raw(
+                None,
+                deploy.bytecode.bytes.as_slice(),
+                deploy.constructor_args.clone(),
+                deploy.owner.clone(),
+                tx.payload().fee.gas_limit,
+            );
+            match result {
+                Ok(_) => {
+                    receipt.gas_spent += deploy.bytecode.bytes.len() as u64
+                        * GAS_PER_DEPLOY_BYTE;
+                }
+                // Ensure all gas is consumed if there's an error in the
+                // deployment
+                Err(err) => {
+                    info!("Tx caused deployment error {err:?}");
+                    receipt.gas_spent = receipt.gas_limit;
+                }
+            }
         }
     };
 
-    // Ensure all gas is consumed if there's an error in the
-    // contract call or in deployment
-    if receipt.data.is_err() || deploy_error {
+    // Ensure all gas is consumed if there's an error in the contract call
+    if receipt.data.is_err() {
         receipt.gas_spent = receipt.gas_limit;
     }
 
