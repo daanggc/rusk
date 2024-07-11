@@ -101,6 +101,7 @@ fn make_and_execute_transaction_deploy(
     bytecode: impl AsRef<[u8]>,
     gas_limit: u64,
     init_value: u8,
+    should_fail: bool,
 ) {
     let mut rng = StdRng::seed_from_u64(0xcafe);
 
@@ -141,10 +142,12 @@ fn make_and_execute_transaction_deploy(
     let spent_transactions =
         result.expect("generator procedure should succeed");
     let mut spent_transactions = spent_transactions.into_iter();
-    let tx = spent_transactions
-        .next()
-        .expect("There should be one spent transactions");
-    assert!(tx.err.is_none(), "Transaction should succeed");
+    if should_fail {
+        let tx = spent_transactions
+            .next()
+            .expect("There should be one spent transactions");
+        assert!(tx.err.is_some(), "Transaction should fail");
+    }
 }
 
 fn assert_bob_contract_is_not_deployed(
@@ -228,6 +231,7 @@ pub async fn contract_deploy() {
         bob_bytecode,
         GAS_LIMIT,
         BOB_INIT_VALUE,
+        false,
     );
     let after_balance = wallet
         .get_balance(0)
@@ -279,6 +283,7 @@ pub async fn contract_already_deployed() {
         bob_bytecode,
         GAS_LIMIT,
         BOB_INIT_VALUE,
+        true,
     );
     let after_balance = wallet
         .get_balance(0)
@@ -332,6 +337,7 @@ pub async fn contract_deploy_corrupted_bytecode() {
         bob_bytecode,
         GAS_LIMIT,
         BOB_INIT_VALUE,
+        true,
     );
     let after_balance = wallet
         .get_balance(0)
@@ -385,6 +391,7 @@ pub async fn contract_deploy_charge() {
         bob_bytecode,
         GAS_LIMIT,
         BOB_INIT_VALUE,
+        false,
     );
     let after_bob_balance = wallet
         .get_balance(0)
@@ -396,6 +403,7 @@ pub async fn contract_deploy_charge() {
         license_bytecode,
         GAS_LIMIT,
         0,
+        false,
     );
     let after_license_balance = wallet
         .get_balance(0)

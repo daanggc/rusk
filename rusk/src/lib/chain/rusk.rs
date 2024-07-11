@@ -25,6 +25,7 @@ use execution_core::{
 };
 use node_data::ledger::{SpentTransaction, Transaction};
 use rusk_abi::dusk::Dusk;
+use rusk_abi::ContractError::{OutOfGas, Panic};
 use rusk_abi::{
     CallReceipt, ContractError, Error as PiecrustError, Event, Session,
     STAKE_CONTRACT, TRANSFER_CONTRACT, VM,
@@ -524,29 +525,29 @@ fn execute(
 
     // Deploy if this is a deployment transaction
     if let Some(deploy) = tx.payload().contract_deploy() {
+        let bytecode_charge =
+            deploy.bytecode.bytes.len() as u64 * GAS_PER_DEPLOY_BYTE;
+        let min_gas_limit = receipt.gas_spent + bytecode_charge;
         let hash = blake3::hash(deploy.bytecode.bytes.as_slice());
-        if hash != deploy.bytecode.hash {
-            info!("Tx caused deployment bytecode hash error");
-            // Ensure all gas is consumed if bytecode check failed
-            receipt.gas_spent = receipt.gas_limit;
+        if tx.payload().fee.gas_limit < min_gas_limit {
+            receipt.data = Err(OutOfGas);
+        } else if hash != deploy.bytecode.hash {
+            receipt.data = Err(Panic("failed bytecode hash check".into()))
         } else {
             let result = session.deploy_raw(
                 None,
                 deploy.bytecode.bytes.as_slice(),
                 deploy.constructor_args.clone(),
                 deploy.owner.clone(),
-                tx.payload().fee.gas_limit,
+                tx.payload().fee.gas_limit - receipt.gas_spent,
             );
             match result {
                 Ok(_) => {
-                    receipt.gas_spent += deploy.bytecode.bytes.len() as u64
-                        * GAS_PER_DEPLOY_BYTE;
+                    receipt.gas_spent += bytecode_charge;
                 }
-                // Ensure all gas is consumed if there's an error in the
-                // deployment
                 Err(err) => {
                     info!("Tx caused deployment error {err:?}");
-                    receipt.gas_spent = receipt.gas_limit;
+                    receipt.data = Err(Panic("failed deployment".into()))
                 }
             }
         }
