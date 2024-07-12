@@ -4,14 +4,15 @@
 //
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
-//! Wrapper for a long data that we want to keep the integrity of.
+//! Wrapper for a strip-able bytecode that we want to keep the integrity of.
 
 extern crate alloc;
+use crate::reader::read_vec;
 use alloc::vec::Vec;
 use bytecheck::CheckBytes;
 use core::mem;
 use dusk_bytes::Error::InvalidData;
-use dusk_bytes::{DeserializableSlice, Error as BytesError, Serializable};
+use dusk_bytes::{Error as BytesError, Serializable};
 use rkyv::{Archive, Deserialize, Serialize};
 
 #[derive(Debug, Clone, PartialEq, Eq, Archive, Serialize, Deserialize)]
@@ -53,12 +54,8 @@ impl Bytecode {
         let mut hash = [0u8; 32];
         hash.copy_from_slice(&buf[..32]);
         buf = &buf[32..];
-        let bytes_len = usize::try_from(u64::from_reader(&mut buf)?)
-            .map_err(|_| BytesError::InvalidData)?;
-        if buf.len() < bytes_len {
-            return Err(InvalidData);
-        }
-        let bytes = buf[..bytes_len].into();
+        let bytes = read_vec(&mut buf)?;
+        let bytes_len = bytes.len();
         Ok((Self { hash, bytes }, 32 + bytes_len + mem::size_of::<u64>()))
     }
 }

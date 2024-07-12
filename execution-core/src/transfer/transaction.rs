@@ -14,6 +14,7 @@ use bytecheck::CheckBytes;
 use dusk_bytes::{DeserializableSlice, Error as BytesError, Serializable};
 use rkyv::{Archive, Deserialize, Serialize};
 
+use crate::reader::read_vec;
 use crate::transfer::CallOrDeploy::{Call, Deploy};
 use crate::transfer::{CallOrDeploy, ContractDeploy};
 use crate::{
@@ -221,9 +222,7 @@ impl Transaction {
         let payload = Payload::from_slice(&buf[..payload_len])?;
         buf = &buf[payload_len..];
 
-        let proof_len = usize::try_from(u64::from_reader(&mut buf)?)
-            .map_err(|_| BytesError::InvalidData)?;
-        let proof = buf[..proof_len].into();
+        let proof = read_vec(&mut buf)?;
 
         Ok(Self { payload, proof })
     }

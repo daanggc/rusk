@@ -30,6 +30,7 @@ use crate::{
 
 mod transaction;
 use crate::bytecode::Bytecode;
+use crate::reader::{read_str, read_vec};
 pub use transaction::{Payload, Transaction};
 
 /// Unique ID to identify a contract.
@@ -164,23 +165,12 @@ impl ContractDeploy {
         let (bytecode, bytecode_len) = Bytecode::from_buf(buf)?;
         buf = &buf[bytecode_len..];
 
-        let owner_len = usize::try_from(u64::from_reader(&mut buf)?)
-            .map_err(|_| BytesError::InvalidData)?;
-        let owner = buf[..owner_len].into();
-        buf = &buf[owner_len..];
+        let owner = read_vec(&mut buf)?;
 
         let constructor_args = match u8::from_reader(&mut buf)? {
             0 => None,
-            1 => {
-                let constructor_args_len =
-                    usize::try_from(u64::from_reader(&mut buf)?)
-                        .map_err(|_| BytesError::InvalidData)?;
-                let constructor_args = buf[..constructor_args_len].into();
-                Some(constructor_args)
-            }
-            _ => {
-                return Err(BytesError::InvalidData);
-            }
+            1 => Some(read_vec(&mut buf)?),
+            _ => return Err(BytesError::InvalidData),
         };
 
         Ok(Self {
@@ -234,15 +224,9 @@ impl ContractCall {
         contract.copy_from_slice(&buf[..32]);
         let mut buf = &buf[32..];
 
-        let name_len = usize::try_from(u64::from_reader(&mut buf)?)
-            .map_err(|_| BytesError::InvalidData)?;
-        let fn_name = String::from_utf8(buf[..name_len].into())
-            .map_err(|_| BytesError::InvalidData)?;
-        buf = &buf[name_len..];
+        let fn_name = read_str(&mut buf)?;
 
-        let args_len = usize::try_from(u64::from_reader(&mut buf)?)
-            .map_err(|_| BytesError::InvalidData)?;
-        let fn_args = buf[..args_len].into();
+        let fn_args = read_vec(&mut buf)?;
 
         Ok(Self {
             contract,
