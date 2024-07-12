@@ -30,7 +30,7 @@ use crate::{
 
 mod transaction;
 use crate::bytecode::Bytecode;
-use crate::reader::{read_str, read_vec};
+use crate::reader::{read_arr, read_str, read_vec};
 pub use transaction::{Payload, Transaction};
 
 /// Unique ID to identify a contract.
@@ -220,9 +220,9 @@ impl ContractCall {
     /// # Errors
     /// Errors when the bytes are not cannonical.
     pub fn from_slice(buf: &[u8]) -> Result<Self, BytesError> {
-        let mut contract = [0u8; 32];
-        contract.copy_from_slice(&buf[..32]);
-        let mut buf = &buf[32..];
+        let mut buf = buf;
+
+        let contract = read_arr::<32>(&mut buf)?;
 
         let fn_name = read_str(&mut buf)?;
 

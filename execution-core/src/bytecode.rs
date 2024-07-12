@@ -7,7 +7,7 @@
 //! Wrapper for a strip-able bytecode that we want to keep the integrity of.
 
 extern crate alloc;
-use crate::reader::read_vec;
+use crate::reader::{read_arr, read_vec};
 use alloc::vec::Vec;
 use bytecheck::CheckBytes;
 use core::mem;
@@ -47,13 +47,8 @@ impl Bytecode {
     /// # Errors
     /// Errors when the bytes are not available.
     pub fn from_buf(buf: &[u8]) -> Result<(Self, usize), BytesError> {
-        if buf.len() < 32 {
-            return Err(InvalidData);
-        }
         let mut buf = buf;
-        let mut hash = [0u8; 32];
-        hash.copy_from_slice(&buf[..32]);
-        buf = &buf[32..];
+        let hash = read_arr::<32>(&mut buf)?;
         let bytes = read_vec(&mut buf)?;
         let bytes_len = bytes.len();
         Ok((Self { hash, bytes }, 32 + bytes_len + mem::size_of::<u64>()))

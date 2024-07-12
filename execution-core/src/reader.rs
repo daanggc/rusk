@@ -41,3 +41,18 @@ pub fn read_str(buf: &mut &[u8]) -> Result<String, BytesError> {
     *buf = &buf[len..];
     Ok(str)
 }
+
+/// Reads array from a buffer.
+/// Resets buffer to a position after the bytes read.
+/// Returns error if length or data could not be read.
+pub fn read_arr<const N: usize>(
+    buf: &mut &[u8],
+) -> Result<[u8; N], BytesError> {
+    if buf.len() < N {
+        return Err(InvalidData);
+    }
+    let mut a = [0u8; N];
+    a.copy_from_slice(&buf[..N]);
+    *buf = &buf[N..];
+    Ok(a)
+}
