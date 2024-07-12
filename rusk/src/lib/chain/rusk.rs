@@ -525,7 +525,7 @@ fn execute(
 
     // Deploy if this is a deployment transaction
     if let Some(deploy) = tx.payload().contract_deploy() {
-        if !receipt.data.is_err() {
+        if receipt.data.is_ok() {
             let bytecode_charge =
                 deploy.bytecode.bytes.len() as u64 * GAS_PER_DEPLOY_BYTE;
             let min_gas_limit = receipt.gas_spent + bytecode_charge;
