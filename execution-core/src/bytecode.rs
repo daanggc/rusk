@@ -10,8 +10,6 @@ extern crate alloc;
 use crate::reader::{read_arr, read_vec};
 use alloc::vec::Vec;
 use bytecheck::CheckBytes;
-use core::mem;
-use dusk_bytes::Error::InvalidData;
 use dusk_bytes::{Error as BytesError, Serializable};
 use rkyv::{Archive, Deserialize, Serialize};
 
@@ -43,14 +41,14 @@ impl Bytecode {
     }
 
     /// Deserialize from a bytes buffer.
+    /// Resets buffer to a position after the bytes read.
     ///
     /// # Errors
     /// Errors when the bytes are not available.
-    pub fn from_buf(buf: &[u8]) -> Result<(Self, usize), BytesError> {
+    pub fn from_buf(buf: &mut &[u8]) -> Result<Self, BytesError> {
         let mut buf = buf;
         let hash = read_arr::<32>(&mut buf)?;
         let bytes = read_vec(&mut buf)?;
-        let bytes_len = bytes.len();
-        Ok((Self { hash, bytes }, 32 + bytes_len + mem::size_of::<u64>()))
+        Ok(Self { hash, bytes })
     }
 }

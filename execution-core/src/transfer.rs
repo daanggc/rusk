@@ -162,8 +162,7 @@ impl ContractDeploy {
     pub fn from_slice(buf: &[u8]) -> Result<Self, BytesError> {
         let mut buf = buf;
 
-        let (bytecode, bytecode_len) = Bytecode::from_buf(buf)?;
-        buf = &buf[bytecode_len..];
+        let bytecode = Bytecode::from_buf(&mut buf)?;
 
         let owner = read_vec(&mut buf)?;
 
