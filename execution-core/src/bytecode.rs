@@ -46,9 +46,8 @@ impl Bytecode {
     /// # Errors
     /// Errors when the bytes are not available.
     pub fn from_buf(buf: &mut &[u8]) -> Result<Self, BytesError> {
-        let mut buf = buf;
-        let hash = read_arr::<32>(&mut buf)?;
-        let bytes = read_vec(&mut buf)?;
+        let hash = read_arr::<32>(buf)?;
+        let bytes = read_vec(buf)?;
         Ok(Self { hash, bytes })
     }
 }

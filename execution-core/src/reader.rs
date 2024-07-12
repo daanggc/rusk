@@ -15,7 +15,9 @@ use dusk_bytes::{DeserializableSlice, Error as BytesError};
 
 /// Reads vector from a buffer.
 /// Resets buffer to a position after the bytes read.
-/// Returns error if length or data could not be read.
+///
+/// # Errors
+/// When length or data could not be read.
 pub fn read_vec(buf: &mut &[u8]) -> Result<Vec<u8>, BytesError> {
     let len = usize::try_from(u64::from_reader(buf)?)
         .map_err(|_| BytesError::InvalidData)?;
@@ -29,7 +31,9 @@ pub fn read_vec(buf: &mut &[u8]) -> Result<Vec<u8>, BytesError> {
 
 /// Reads string from a buffer.
 /// Resets buffer to a position after the bytes read.
-/// Returns error if length or data could not be read.
+///
+/// # Errors
+/// When length or data could not be read.
 pub fn read_str(buf: &mut &[u8]) -> Result<String, BytesError> {
     let len = usize::try_from(u64::from_reader(buf)?)
         .map_err(|_| BytesError::InvalidData)?;
@@ -44,7 +48,9 @@ pub fn read_str(buf: &mut &[u8]) -> Result<String, BytesError> {
 
 /// Reads array from a buffer.
 /// Resets buffer to a position after the bytes read.
-/// Returns error if length or data could not be read.
+///
+/// # Errors
+/// When length or data could not be read.
 pub fn read_arr<const N: usize>(
     buf: &mut &[u8],
 ) -> Result<[u8; N], BytesError> {

@@ -219,6 +219,9 @@ impl Transaction {
 
         let payload_len = usize::try_from(u64::from_reader(&mut buf)?)
             .map_err(|_| BytesError::InvalidData)?;
+        if buf.len() < payload_len {
+            return Err(BytesError::InvalidData);
+        }
         let payload = Payload::from_slice(&buf[..payload_len])?;
         buf = &buf[payload_len..];
 
