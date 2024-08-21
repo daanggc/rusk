@@ -258,6 +258,9 @@ impl<DB: database::DB, VM: vm::VMExecution, N: Network> Acceptor<N, DB, VM> {
             ContextProvisioners,
         >,
     ) -> Result<()> {
+        if true {
+            anyhow::bail!("selective_update disabled");
+        }
         let src = "selective";
         let changed_prov = Self::changed_provisioners(blk, txs)?;
         if changed_prov.is_empty() {
