@@ -8,9 +8,9 @@
     middleEllipsis,
   } from "$lib/dusk/string";
   import {
+    mdiCloseThick,
     mdiContentCopy,
     mdiPlusBoxOutline,
-    mdiSwapHorizontal,
     mdiTimerSand,
   } from "@mdi/js";
   import { Button, Icon, ProgressBar } from "$lib/dusk/components";
@@ -20,6 +20,8 @@
   import Overlay from "./Overlay.svelte";
 
   import "./AddressPicker.css";
+  import DUSK_LOGO_PATH from "$lib/dusk/icons/logo";
+  import { walletStore } from "$lib/stores";
 
   /** @type {string} */
   export let currentAddress;
@@ -38,6 +40,10 @@
   const dispatch = createEventDispatcher();
 
   let expanded = false;
+
+  function toggleDropDown() {
+    expanded = !expanded;
+  }
 
   function closeDropDown() {
     expanded = false;
@@ -100,14 +106,20 @@
     aria-expanded={expanded}
     on:keydown={handleDropDownKeyDown}
   >
-    <Button disabled variant="secondary" icon={{ path: mdiSwapHorizontal }} />
+    <Button
+      variant="secondary"
+      on:click={toggleDropDown}
+      icon={{ path: expanded ? mdiCloseThick : DUSK_LOGO_PATH }}
+    />
 
     <p class="address-picker__current-address">
       {middleEllipsis(currentAddress, calculateAdaptiveCharCount(screenWidth))}
     </p>
     <Button
       aria-label="Copy Address"
-      className="address-picker__copy-address-button"
+      className="address-picker__copy-address-button {expanded
+        ? 'address-picker__copy-address-button--visible'
+        : ''}"
       icon={{ path: mdiContentCopy }}
       on:click={copyCurrentAddress}
       variant="secondary"
@@ -132,9 +144,13 @@
               type="button"
               role="menuitem"
               on:click={() => {
-                currentAddress = address;
+                walletStore.setCurrentAddress(address);
                 closeDropDown();
-              }}>{address}</button
+              }}
+              >{middleEllipsis(
+                address,
+                calculateAdaptiveCharCount(screenWidth)
+              )}</button
             >
           </li>
         {/each}
@@ -151,7 +167,7 @@
           tabindex="0"
           className="address-picker__generate-address-button"
           icon={{ path: mdiPlusBoxOutline }}
-          text="Generate Address"
+          text="Generate New Address"
           on:click={(event) => {
             event.preventDefault();
             dispatch("generateAddress");

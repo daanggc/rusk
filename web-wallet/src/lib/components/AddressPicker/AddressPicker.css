@@ -10,7 +10,16 @@
 .address-picker__current-address {
   width: 100%;
   text-align: center;
-  font-family: monospace;
+  font-family: var(--mono-font-family);
+  font-weight: 500;
+}
+
+.address-picker__copy-address-button {
+  visibility: hidden;
+}
+
+.address-picker__copy-address-button--visible {
+  visibility: visible;
 }
 
 .address-picker__copy-address-button:hover {
@@ -68,8 +77,9 @@
   overflow: hidden;
   width: 100%;
   display: block;
+  padding: 0.75em 0;
+  font-family: var(--mono-font-family);
   text-align: center;
-  padding: 0.5em 0;
 }
 
 .address-picker__generating-address-wrapper {
