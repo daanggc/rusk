@@ -793,6 +793,12 @@ fn slash(session: &mut Session, slash: Vec<Slash>) -> Result<Vec<Event>> {
     let mut events = vec![];
     for s in slash {
         let provisioner = s.provisioner.into_inner();
+        let provisioner_bs58 =
+            bs58::encode(provisioner.to_bytes()).into_string();
+        info!(
+            "Slashing type {:?} - provisioner {provisioner_bs58}",
+            s.r#type
+        );
         let r = match s.r#type {
             node_data::ledger::SlashType::Soft => session.call::<_, ()>(
                 STAKE_CONTRACT,
