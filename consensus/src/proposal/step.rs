@@ -66,7 +66,7 @@ impl<T: Operations + 'static, D: Database> ProposalStep<T, D> {
             let failed_attestations =
                 ctx.sv_registry.lock().await.get_failed_atts(iteration);
 
-            if let Ok(msg) = self
+            match self
                 .bg
                 .generate_candidate_message(
                     &ctx.round_update,
@@ -75,25 +75,29 @@ impl<T: Operations + 'static, D: Database> ProposalStep<T, D> {
                 )
                 .await
             {
-                ctx.outbound.try_send(msg.clone());
+                Ok(msg) => {
+                    ctx.outbound.try_send(msg.clone());
 
-                Self::wait_until_next_slot(ctx.round_update.timestamp()).await;
-                // register new candidate in local state
-                match self
-                    .handler
-                    .lock()
-                    .await
-                    .collect(msg, &ctx.round_update, committee, None)
-                    .await
-                {
-                    Ok(HandleMsgOutput::Ready(msg)) => return Ok(msg),
-                    Err(e) => {
-                        error!("invalid candidate generated due to {:?}", e)
-                    }
-                    _ => {}
-                };
-            } else {
-                error!("block generator couldn't create candidate block")
+                    Self::wait_until_next_slot(ctx.round_update.timestamp())
+                        .await;
+                    // register new candidate in local state
+                    match self
+                        .handler
+                        .lock()
+                        .await
+                        .collect(msg, &ctx.round_update, committee, None)
+                        .await
+                    {
+                        Ok(HandleMsgOutput::Ready(msg)) => return Ok(msg),
+                        Err(e) => {
+                            error!("invalid candidate generated due to {:?}", e)
+                        }
+                        _ => {}
+                    };
+                }
+                Err(e) => error!(
+                    "block generator couldn't create candidate block: {e:?}"
+                ),
             }
         }
 
