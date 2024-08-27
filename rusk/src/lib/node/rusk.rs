@@ -48,7 +48,7 @@ pub static DUSK_KEY: LazyLock<BlsPublicKey> = LazyLock::new(|| {
         .expect("Dusk consensus public key to be valid")
 });
 
-const DEFAULT_GAS_PER_DEPLOY_BYTE: u64 = 100;
+const DEFAULT_GAS_PER_DEPLOY_BYTE: u64 = 1000;
 
 impl Rusk {
     pub fn new<P: AsRef<Path>>(
@@ -602,6 +602,7 @@ fn execute(
     if let Some(deploy) = tx.deploy() {
         let deploy_charge =
             bytecode_charge(&deploy.bytecode, &gas_per_deploy_byte);
+        println!("xxx deploy charge={} gas_limit={}", deploy_charge, tx.gas_limit());
         if tx.gas_limit() < deploy_charge {
             return Err(PiecrustError::Panic(
                 "not enough gas to deploy".into(),

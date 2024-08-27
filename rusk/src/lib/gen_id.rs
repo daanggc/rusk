@@ -25,6 +25,7 @@ pub fn gen_contract_id(
         .as_bytes()
         .try_into()
         .expect("the hash result is exactly `CONTRACT_ID_BYTES` long");
+    println!("gen_contract_id produces {}", hex::encode(&hash_bytes));
     ContractId::from_bytes(hash_bytes)
 }
 
