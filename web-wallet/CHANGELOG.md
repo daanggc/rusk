@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update Buttons to match the design system [#1606]
 - Update `Stepper` component to new design [#2071]
 - Update dashboard to use routes instead of `Tabs` for navigation pattern [#2075]
+- Update `Balance` component to optionally show a `UsageIndicator` [#2234]
 
 ### Fixed
 
@@ -239,6 +240,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2000]: https://github.com/dusk-network/rusk/issues/2000
 [#2071]: https://github.com/dusk-network/rusk/issues/2071
 [#2118]: https://github.com/dusk-network/rusk/issues/2118
+[#2118]: https://github.com/dusk-network/rusk/issues/2234
 
 <!-- VERSIONS -->
 
