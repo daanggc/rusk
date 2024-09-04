@@ -48,7 +48,7 @@ pub static DUSK_KEY: LazyLock<BlsPublicKey> = LazyLock::new(|| {
         .expect("Dusk consensus public key to be valid")
 });
 
-const DEFAULT_GAS_PER_DEPLOY_BYTE: u64 = 1000;
+const DEFAULT_GAS_PER_DEPLOY_BYTE: u64 = 200000;
 
 impl Rusk {
     pub fn new<P: AsRef<Path>>(
@@ -144,7 +144,7 @@ impl Rusk {
                     // re-execute all spent transactions. We don't discard the
                     // transaction, since it is technically valid.
                     if gas_spent > block_gas_left {
-                        warn!("This is not supposed to happen with conservative tx inclusion");
+                        warn!("This is not supposed to happen with conservative tx inclusion {} {}", gas_spent, block_gas_left);
                         session = self.session(block_height, None)?;
 
                         for spent_tx in &spent_txs {
@@ -525,11 +525,12 @@ fn contract_deploy(
     session: &mut Session,
     deploy: &ContractDeploy,
     gas_limit: u64,
+    gas_price: u64,
     gas_per_deploy_byte: Option<u64>,
     receipt: &mut CallReceipt<Result<Vec<u8>, ContractError>>,
 ) {
     let deploy_charge = bytecode_charge(&deploy.bytecode, &gas_per_deploy_byte);
-    let min_gas_limit = receipt.gas_spent + deploy_charge;
+    let min_gas_limit = receipt.gas_spent + (deploy_charge / gas_price) + 1;
     let hash = blake3::hash(deploy.bytecode.bytes.as_slice());
     if gas_limit < min_gas_limit {
         receipt.data = Err(ContractError::OutOfGas);
@@ -549,7 +550,7 @@ fn contract_deploy(
             gas_limit - receipt.gas_spent,
         );
         match result {
-            Ok(_) => receipt.gas_spent += deploy_charge,
+            Ok(_) => receipt.gas_spent += (deploy_charge / gas_price) + 1,
             Err(err) => {
                 info!("Tx caused deployment error {err:?}");
                 receipt.data =
@@ -602,8 +603,14 @@ fn execute(
     if let Some(deploy) = tx.deploy() {
         let deploy_charge =
             bytecode_charge(&deploy.bytecode, &gas_per_deploy_byte);
-        println!("xxx deploy charge={} gas_limit={}", deploy_charge, tx.gas_limit());
-        if tx.gas_limit() < deploy_charge {
+        println!(
+            "xxx deploy charge={} gas_limit={} gas_price={} gas_value={}",
+            deploy_charge,
+            tx.gas_limit(),
+            tx.gas_price(),
+            tx.gas_limit() * tx.gas_price()
+        );
+        if tx.gas_limit() * tx.gas_price() < deploy_charge {
             return Err(PiecrustError::Panic(
                 "not enough gas to deploy".into(),
             ));
@@ -627,6 +634,7 @@ fn execute(
                 session,
                 deploy,
                 tx.gas_limit(),
+                tx.gas_price(),
                 gas_per_deploy_byte,
                 &mut receipt,
             );
