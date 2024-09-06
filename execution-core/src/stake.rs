@@ -147,9 +147,10 @@ pub struct Withdraw {
 impl Withdraw {
     /// Create a new withdraw call.
     #[must_use]
-    pub fn new(sk: &BlsSecretKey, withdraw: TransferWithdraw) -> Self {
+    pub fn new(sk: &BlsSecretKey) -> Self {
+        let account =BlsPublicKey::from(sk);
         let mut stake_withdraw = Withdraw {
-            account: BlsPublicKey::from(sk),
+            account: account,
             withdraw,
             signature: BlsSignature::default(),
         };
@@ -184,6 +185,7 @@ impl Withdraw {
         let mut bytes = Vec::new();
 
         bytes.extend(self.account.to_bytes());
+        bytes.extend(self.fund_key.to_bytes());
         bytes.extend(self.withdraw.wrapped_signature_message());
 
         bytes
