@@ -196,4 +196,28 @@ mod tests {
             assert_eq!(actual, expected_hash)
         }
     }
+
+    // This Source Code Form is subject to the terms of the Mozilla Public
+    // License, v. 2.0. If a copy of the MPL was not distributed with this
+    // file, You can obtain one at http://mozilla.org/MPL/2.0/.
+    //
+    // Copyright (c) DUSK NETWORK. All rights reserved.
+
+    use rand::rngs::StdRng;
+    use rand::RngCore;
+    use rand::SeedableRng;
+
+    #[test]
+    fn merkle() {
+        let tx_hashes: Vec<_> = (0..100000)
+            .map(|seed| {
+                let rng = &mut StdRng::seed_from_u64(seed as u64);
+                let mut buf = [0u8; 32];
+                rng.fill_bytes(&mut buf);
+                buf
+            })
+            .collect();
+
+        merkle_root(&tx_hashes[..]);
+    }
 }
