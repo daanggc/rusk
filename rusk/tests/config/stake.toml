@@ -22,3 +22,7 @@ amount = 1_000_000_000_000
 address = "25omWWRyfcMjYNbQZVyc3rypYLi8UqZuthoJHqbCEriRX3z2EmnBaXWZLFL2NvzvDnkoYoHLGiSYQpmupNJj1sSdWNstqzfFEpiqvSNYw7gqvoEiU9FsEHUMG1ZyG3XgL8Rv"
 amount = 1_000_000_000_000
 reward = 1_000_000_000_000
+
+[[stake]]
+address = "owFNnhnMuPHhyQcZ1dAqC5wuScqnXGkrEZWRQvYBU9wwNFHmG32gRTFdZhYSgw98KzNqm7rpCBkwoL4nzCE6gqGB9BrjsDJx3UgfTk78CM8BBWsehXamPSPYcC9ynq8Pi3V"
+amount = 0

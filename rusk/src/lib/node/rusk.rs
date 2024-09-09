@@ -5,17 +5,19 @@
 // Copyright (c) DUSK NETWORK. All rights reserved.
 
 use std::path::Path;
-use std::sync::{mpsc, Arc, LazyLock};
+use std::sync::{mpsc, Arc};
 use std::time::{Duration, Instant};
 use std::{fs, io};
 
+use execution_core::stake::StakeKeys;
 use execution_core::transfer::PANIC_NONCE_NOT_READY;
 use parking_lot::RwLock;
+use rusk_recovery_tools::state::DUSK_CONSENSUS_KEY;
 use sha3::{Digest, Sha3_256};
 use tokio::task;
 use tracing::{debug, info, warn};
 
-use dusk_bytes::{DeserializableSlice, Serializable};
+use dusk_bytes::Serializable;
 use dusk_consensus::config::{
     ratification_extra, ratification_quorum, validation_extra,
     validation_quorum, MAX_NUMBER_OF_TRANSACTIONS,
@@ -43,12 +45,6 @@ use crate::gen_id::gen_contract_id;
 use crate::http::RuesEvent;
 use crate::Error::InvalidCreditsCount;
 use crate::{Error, Result};
-
-pub static DUSK_KEY: LazyLock<BlsPublicKey> = LazyLock::new(|| {
-    let dusk_cpk_bytes = include_bytes!("../../assets/dusk.cpk");
-    BlsPublicKey::from_slice(dusk_cpk_bytes)
-        .expect("Dusk consensus public key to be valid")
-});
 
 const DEFAULT_GAS_PER_DEPLOY_BYTE: u64 = 100;
 const DEFAULT_MIN_DEPLOYMENT_GAS_PRICE: u64 = 2000;
@@ -396,12 +392,12 @@ impl Rusk {
     pub fn provisioners(
         &self,
         base_commit: Option<[u8; 32]>,
-    ) -> Result<impl Iterator<Item = (BlsPublicKey, StakeData)>> {
+    ) -> Result<impl Iterator<Item = (StakeKeys, StakeData)>> {
         let (sender, receiver) = mpsc::channel();
         self.feeder_query(STAKE_CONTRACT, "stakes", &(), sender, base_commit)?;
         Ok(receiver.into_iter().map(|bytes| {
-            rkyv::from_bytes::<(BlsPublicKey, StakeData)>(&bytes).expect(
-                "The contract should only return (pk, stake_data) tuples",
+            rkyv::from_bytes::<(StakeKeys, StakeData)>(&bytes).expect(
+                "The contract should only return (StakeKeys, StakeData) tuples",
             )
         }))
     }
@@ -825,7 +821,7 @@ fn reward_slash_and_update_root(
     });
 
     rewards.push(Reward {
-        account: *DUSK_KEY,
+        account: *DUSK_CONSENSUS_KEY,
         value: dusk_value,
         reason: RewardReason::Other,
     });

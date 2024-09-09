@@ -243,7 +243,7 @@ impl Rusk {
             .provisioners(base_commit)
             .map_err(|e| anyhow::anyhow!("Cannot get provisioners {e}"))?
             .map(|(pk, stake)| {
-                (node_data::bls::PublicKey::new(pk), Self::to_stake(stake))
+                (PublicKey::new(pk.account), Self::to_stake(stake))
             });
         let mut ret = Provisioners::empty();
         for (pubkey_bls, stake) in provisioners {
