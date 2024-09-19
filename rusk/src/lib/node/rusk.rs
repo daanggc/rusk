@@ -493,7 +493,8 @@ impl Rusk {
         base: [u8; 32],
         to_delete: Vec<[u8; 32]>,
     ) {
-        self.tip.write().base = base;
+        self.tip.write().base = base.clone();
+        task::spawn(finalize_commit(self.vm.clone(), base));
 
         // Deleting commits is blocking, meaning it will wait until any process
         // using the commit is done. This includes any queries that are
@@ -513,6 +514,12 @@ async fn delete_commits(vm: Arc<VM>, commits: Vec<[u8; 32]>) {
         if let Err(err) = vm.delete_commit(commit) {
             debug!("failed deleting commit {}: {err}", hex::encode(commit));
         }
+    }
+}
+
+async fn finalize_commit(vm: Arc<VM>, commit: [u8; 32]) {
+    if let Err(err) = vm.finalize_commit(commit) {
+        debug!("failed finalizing commit {}: {err}", hex::encode(commit));
     }
 }
 
