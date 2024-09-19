@@ -81,8 +81,11 @@ impl Rusk {
         }
         let mut base_commit = [0u8; 32];
         base_commit.copy_from_slice(&base_commit_bytes);
+        println!("BASE COMMIT READ FROM state.id = {:x?}", base_commit);
 
         let vm = Arc::new(rusk_abi::new_vm(dir)?);
+
+        println!("AFTER BASE COMMIT READ");
 
         let tip = Arc::new(RwLock::new(RuskTip {
             current: base_commit,
@@ -118,6 +121,7 @@ impl Rusk {
 
         let voters = params.voters_pubkey.as_ref().map(|voters| &voters[..]);
 
+        println!("EXECUTE TXS");
         let mut session = self.session(block_height, None)?;
 
         let mut block_gas_left = block_gas_limit;
@@ -179,6 +183,7 @@ impl Rusk {
                     // transaction, since it is technically valid.
                     if gas_spent > block_gas_left {
                         warn!("This is not supposed to happen with conservative tx inclusion");
+                        println!("EXECUTE TXS2");
                         session = self.session(block_height, None)?;
 
                         for spent_tx in &spent_txs {
@@ -282,6 +287,7 @@ impl Rusk {
         slashing: Vec<Slash>,
         voters: Option<&[Voter]>,
     ) -> Result<(Vec<SpentTransaction>, VerificationOutput)> {
+        println!("VERIFY TXS");
         let session = self.session(block_height, None)?;
 
         accept(
@@ -314,6 +320,7 @@ impl Rusk {
         slashing: Vec<Slash>,
         voters: Option<&[Voter]>,
     ) -> Result<(Vec<SpentTransaction>, VerificationOutput)> {
+        println!("ACCEPT TXS");
         let session = self.session(block_height, None)?;
 
         let (spent_txs, verification_output, session, events) = accept(
@@ -460,6 +467,7 @@ impl Rusk {
         block_height: u64,
         commit: Option<[u8; 32]>,
     ) -> Result<Session> {
+        println!("SESSION block_height={} option some={}", block_height, commit.is_some());
         let commit = commit.unwrap_or_else(|| {
             let tip = self.tip.read();
             tip.current

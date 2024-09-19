@@ -6,3 +6,40 @@ notes = [100_000_000_000_000]
 [[stake]]
 address = 'oCqYsUMRqpRn2kSabH52Gt6FQCwH5JXj5MtRdYVtjMSJ73AFvdbPf98p3gz98fQwNy9ZBiDem6m9BivzURKFSKLYWP3N9JahSPZs9PnZ996P18rTGAjQTNFsxtbrKx79yWu'
 amount = 1_000_000_000_000
+
+[[phoenix_balance]]
+address = '3AiQ4m8tnAMDRTuFxDYfh6vYdJXbbhZgkmKTJHoYBvSFqXChwPjMpZX573KXm9FYPoy47gWYtoybPpPnwYDb8pzs'
+seed = 0xcafe_beef
+notes = [50_000_000_000_000]
+
+[[moonlight_account]]
+address = 'opGnqavMrtRRkfQSvLyQRd5DgS7pRcYDm3FXWEjVfktVHYqiahwpuStQrH14JDYZexujZZ6ukggzypgSFZV8R9bauPz8yLSf1DAr7sVy1KMZbmyCT1DVcdJRQ9nzJLEsyzv'
+balance = 60_000_000_000_000
+
+[[moonlight_account]]
+address = 'uJ32BzcqGeuzdKyJSQxUhzdd2xVRhAA3QkffsW197k2awU2RbvKrWNe8agvtnhoae4PXC41yL8easDQy5NwcXnorDXGV4L8T1uiYkk1mxSPXBxdQ6TWyA6iEJjmKhnVPJML'
+balance = 61_000_000_000_000
+
+[[moonlight_account]]
+address = '22y3DL6csNC98AJkhQhsrKbjBFEX1v63R7mAbxhRCuXvbLSP3jy1fwMqtrAFjbkB2uTkicEp6ntEKQs7zdsAsuxS6L9FkmEChHmWg3DX4tx8gzecBLQuo437Nzw4Bc74eXEt'
+balance = 62_000_000_000_000
+
+[[moonlight_account]]
+address = '26G8QLriFLXq5PqYPSqNvSjNFwExKxfGwLc3rY9yRnvn5zTfDoQTiRk7yawvg2tvzJ519cQCFNsQPTfryLeyZCRCFeigueWPFBz3XCt8ajgpT9jgmvEVfuxLqJe8Ckir7uwL'
+balance = 63_000_000_000_000
+
+[[moonlight_account]]
+address = '21QVDgB74QDYPy8n7SFnfhKaJfQi72eHh9XWJeXV33zKN7rjSGP1dgrVyn7FDGyz5QSH3HeRm73JZxAykoF51Cxn92hpvcad6XAS22R9H9CypYs5w3XuQdzw66MRJNmncSXv'
+balance = 64_000_000_000_000
+
+[[moonlight_account]]
+address = '23uR8GKVMs54YHzo4JLmBwEHs3uMZpaHnogAjViiWJWgRCjpyzFC3QdwixAMVGDG7DxURKxQgnBmD6QdeWyuKs9AKNhG6J4ZV16uQK2gpLLBC5bY93Jn5porChsAbWmwUEx6'
+balance = 65_000_000_000_000
+
+[[moonlight_account]]
+address = '26qQBmhVHSSny3bDnUgLKaiiRon92K7hVqih9r5mh2vD85gJ5Xm9uV7mfZTeR2hgmfVtPFd7Ndwejb5AKZE2aoYAJwsmSrTeK2MNLna29xrwcSBFe8hdL9r6AwsoVoKYrUYU'
+balance = 66_000_000_000_000
+
+[[moonlight_account]]
+address = 'miYKKT714d8EfWtCXaxHwXLE3ecU4MpzNiefRr6eCypaSgfWrFMHHwmLdfiMJiEV5yoMuBmMk9zwfMpCMxaWzUgjXqvzvQpZVkQKSgAJH48z9UsnWqtvKYNHvEzQgLE6k4d'
+balance = 67_000_000_000_000

@@ -261,6 +261,7 @@ where
         None => generate_empty_state(state_dir, snapshot),
     }?;
 
+    println!("RECOVERY DEPLOY new_session with commit_id={:x?}", old_commit_id);
     let mut session = rusk_abi::new_session(
         &vm,
         old_commit_id,

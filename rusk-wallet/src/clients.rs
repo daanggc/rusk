@@ -201,14 +201,15 @@ impl State {
             })
             .collect();
 
-        let inputs = try_input_notes(inputs?, target)
+        let x = try_input_notes(inputs?, target)
             .into_iter()
             .map(|(note, scalar)| {
                 let opening = self.fetch_opening(&note)?;
 
                 Ok((note, opening, scalar))
             })
-            .collect();
+            /*.collect()*/;
+        let inputs = x.collect();
 
         sk.zeroize();
 

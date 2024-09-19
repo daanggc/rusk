@@ -28,6 +28,8 @@ members = [
 
     # Test utils
     "test-wallet",
+
+    "rusk-wallet",
 ]
 exclude = ["rusk-wallet"]
 resolver = "2"

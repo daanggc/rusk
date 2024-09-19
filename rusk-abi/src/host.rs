@@ -35,6 +35,7 @@ pub fn new_session(
     chain_id: u8,
     block_height: u64,
 ) -> Result<Session, PiecrustError> {
+    println!("new_session base={:x?}", base);
     vm.session(
         SessionData::builder()
             .base(base)
