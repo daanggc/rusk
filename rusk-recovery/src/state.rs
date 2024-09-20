@@ -277,11 +277,19 @@ where
     info!("{} persisted id", theme.success("Storing"));
     let commit_id = session.commit()?;
     fs::write(state_id_path, commit_id)?;
+    for entry in state_dir.read_dir()? {
+        let entry = entry?;
+        if entry.file_name().to_string_lossy().starts_with("dep_"){
+            fs::remove_file(entry.path())?;
+        }
+    }
+    fs::write(state_dir.join(format!("dep_{}", hex::encode(commit_id))), "b")?;
 
     if old_commit_id != commit_id {
         vm.finalize_commit(old_commit_id)?;
         vm.delete_commit(old_commit_id)?;
     }
+    vm.finalize_commit(commit_id)?;
 
     info!("{} {}", theme.action("Init Root"), hex::encode(commit_id));
 

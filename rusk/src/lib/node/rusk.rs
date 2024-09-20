@@ -359,6 +359,13 @@ impl Rusk {
     ) -> Result<()> {
         let commit_id_path = to_rusk_state_id_path(&self.dir);
         fs::write(commit_id_path, commit)?;
+        for entry in self.dir.read_dir()? {
+            let entry = entry?;
+            if entry.file_name().to_string_lossy().starts_with("id_"){
+                fs::remove_file(entry.path())?;
+            }
+        }
+        fs::write(self.dir.join(format!("id_{}", hex::encode(commit))), "a")?;
 
         self.set_base_and_delete(commit, to_delete);
         Ok(())
