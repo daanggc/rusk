@@ -279,6 +279,7 @@ where
     fs::write(state_id_path, commit_id)?;
 
     if old_commit_id != commit_id {
+        vm.finalize_commit(old_commit_id)?;
         vm.delete_commit(old_commit_id)?;
     }
 
