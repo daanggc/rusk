@@ -520,6 +520,7 @@ async fn delete_commits(vm: Arc<VM>, commits: Vec<[u8; 32]>) {
 async fn finalize_commit(vm: Arc<VM>, commit: [u8; 32]) {
     if let Err(err) = vm.finalize_commit(commit) {
         debug!("failed finalizing commit {}: {err}", hex::encode(commit));
+        println!("failed finalizing commit {}: {err}", hex::encode(commit));
     }
 }
 
