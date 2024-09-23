@@ -279,11 +279,11 @@ where
     fs::write(state_id_path, commit_id)?;
     for entry in state_dir.read_dir()? {
         let entry = entry?;
-        if entry.file_name().to_string_lossy().starts_with("dep_"){
+        if entry.file_name().to_string_lossy().starts_with("deploy_"){
             fs::remove_file(entry.path())?;
         }
     }
-    fs::write(state_dir.join(format!("dep_{}", hex::encode(commit_id))), "b")?;
+    fs::write(state_dir.join(format!("deploy_{}", hex::encode(commit_id))), "b")?;
 
     if old_commit_id != commit_id {
         vm.finalize_commit(old_commit_id)?;
