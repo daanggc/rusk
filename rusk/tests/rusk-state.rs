@@ -111,7 +111,7 @@ pub fn rusk_state_accepted() -> Result<()> {
     // Setup the logger
     logger();
 
-    let tmp = tempdir().expect("Should be able to create temporary directory");
+    let tmp = tempdir().expect("Should be able to create temporary directory").as_ref().join("stump");
     let rusk = initial_state(&tmp)?;
 
     push_note(&rusk, |_tip, _vm| {});
@@ -141,7 +141,7 @@ pub fn rusk_state_finalized() -> Result<()> {
     // Setup the logger
     logger();
 
-    let tmp = tempdir().expect("Should be able to create temporary directory");
+    let tmp = tempdir().expect("Should be able to create temporary directory").as_ref().join("stump");
     let rusk = initial_state(&tmp)?;
 
     push_note(&rusk, |mut tip, _vm| {

@@ -145,7 +145,7 @@ pub async fn stake() -> Result<()> {
     // Setup the logger
     logger();
 
-    let tmp = tempdir().expect("Should be able to create temporary directory");
+    let tmp = tempdir().expect("Should be able to create temporary directory").as_ref().join("stump");
     let rusk = stake_state(&tmp)?;
 
     let cache = Arc::new(RwLock::new(HashMap::new()));
@@ -238,7 +238,7 @@ pub async fn reward() -> Result<()> {
     // Setup the logger
     logger();
 
-    let tmp = tempdir().expect("Should be able to create temporary directory");
+    let tmp = tempdir().expect("Should be able to create temporary directory").as_ref().join("stump");
     let rusk = stake_state(&tmp)?;
 
     let cache = Arc::new(RwLock::new(HashMap::new()));
@@ -275,7 +275,7 @@ pub async fn slash() -> Result<()> {
     // Setup the logger
     logger();
 
-    let tmp = tempdir().expect("Should be able to create temporary directory");
+    let tmp = tempdir().expect("Should be able to create temporary directory").as_ref().join("stump");
     let rusk = slash_state(&tmp)?;
 
     let cache = Arc::new(RwLock::new(HashMap::new()));

@@ -180,7 +180,7 @@ pub async fn multi_transfer() -> Result<()> {
     // Setup the logger
     logger();
 
-    let tmp = tempdir().expect("Should be able to create temporary directory");
+    let tmp = tempdir().expect("Should be able to create temporary directory").as_ref().join("stump");
     let rusk = initial_state(&tmp)?;
 
     let cache = Arc::new(RwLock::new(HashMap::new()));
