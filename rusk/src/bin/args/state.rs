@@ -94,11 +94,27 @@ pub fn recovery_state(
 fn clean_state() -> Result<(), io::Error> {
     let state_path = rusk_profile::get_rusk_state_dir()?;
 
-    fs::remove_dir_all(state_path).or_else(|e| {
+    let r = fs::remove_dir_all(state_path.clone()).or_else(|e| {
         if e.kind() == io::ErrorKind::NotFound {
             Ok(())
         } else {
             Err(e)
         }
-    })
+    });
+
+    let main_state_path = state_path
+        .parent()
+        .expect("Parent should exist")
+        .join("main");
+
+    let _r2 = fs::remove_dir_all(main_state_path).or_else(|e| {
+        // todo: return r2 eventually
+        if e.kind() == io::ErrorKind::NotFound {
+            Ok(())
+        } else {
+            Err(e)
+        }
+    });
+
+    r
 }
