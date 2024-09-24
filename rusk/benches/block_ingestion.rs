@@ -154,7 +154,10 @@ fn bench_accept(
 }
 
 pub fn accept_benchmark(c: &mut Criterion) {
-    let tmp = tempdir().expect("Creating a temp dir should work").as_ref().join("stump");
+    let tmp = tempdir()
+        .expect("Creating a temp dir should work")
+        .as_ref()
+        .join("stump");
     let snapshot = toml::from_str(include_str!("../tests/config/bench.toml"))
         .expect("Cannot deserialize config");
 
