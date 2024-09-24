@@ -137,7 +137,10 @@ impl<DB: database::DB, VM: vm::VMExecution, N: Network> Acceptor<N, DB, VM> {
     ) -> anyhow::Result<Self> {
         let tip_height = tip.inner().header().height;
         let tip_state_hash = tip.inner().header().state_hash;
-        println!("INIT_CONSENSUS tip_height={} state_hash={:x?}", tip_height, tip_state_hash);
+        println!(
+            "INIT_CONSENSUS tip_height={} state_hash={:x?}",
+            tip_height, tip_state_hash
+        );
 
         let mut provisioners_list = ContextProvisioners::new(provisioners_list);
 

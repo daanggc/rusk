@@ -361,7 +361,7 @@ impl Rusk {
         fs::write(commit_id_path, commit)?;
         for entry in self.dir.read_dir()? {
             let entry = entry?;
-            if entry.file_name().to_string_lossy().starts_with("id_"){
+            if entry.file_name().to_string_lossy().starts_with("id_") {
                 fs::remove_file(entry.path())?;
             }
         }
@@ -474,7 +474,11 @@ impl Rusk {
         block_height: u64,
         commit: Option<[u8; 32]>,
     ) -> Result<Session> {
-        println!("SESSION block_height={} option some={}", block_height, commit.is_some());
+        println!(
+            "SESSION block_height={} option some={}",
+            block_height,
+            commit.is_some()
+        );
         let commit = commit.unwrap_or_else(|| {
             let tip = self.tip.read();
             tip.current
@@ -500,8 +504,13 @@ impl Rusk {
         base: [u8; 32],
         to_delete: Vec<[u8; 32]>,
     ) {
-        let del_str: Vec<String> = to_delete.iter().map(|a|hex::encode(a)).collect();
-        println!("SET_BASE_AND_DELETE base={} delete={:?}", hex::encode(base), del_str);
+        let del_str: Vec<String> =
+            to_delete.iter().map(|a| hex::encode(a)).collect();
+        println!(
+            "SET_BASE_AND_DELETE base={} delete={:?}",
+            hex::encode(base),
+            del_str
+        );
 
         self.tip.write().base = base.clone();
         task::spawn(finalize_commit(self.vm.clone(), base));
