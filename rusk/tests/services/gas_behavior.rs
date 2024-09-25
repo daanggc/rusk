@@ -137,10 +137,7 @@ pub async fn erroring_tx_charged_full() -> Result<()> {
     // Setup the logger
     logger();
 
-    let tmp = tempdir()
-        .expect("Should be able to create temporary directory")
-        .as_ref()
-        .join("stump");
+    let tmp = tempdir().expect("Should be able to create temporary directory");
     let rusk = initial_state(&tmp)?;
 
     let cache = Arc::new(RwLock::new(HashMap::new()));

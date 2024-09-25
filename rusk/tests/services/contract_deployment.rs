@@ -186,10 +186,8 @@ struct Fixture {
 
 impl Fixture {
     fn build(deploy_bob: bool) -> Self {
-        let tmp = tempdir()
-            .expect("Should be able to create temporary directory")
-            .as_ref()
-            .join("stump");
+        let tmp =
+            tempdir().expect("Should be able to create temporary directory");
         let rusk = initial_state(&tmp, deploy_bob)
             .expect("Initializing should succeed");
 
@@ -213,7 +211,7 @@ impl Fixture {
         .to_vec();
         let contract_id = gen_contract_id(&bob_bytecode, 0u64, &OWNER);
 
-        let path = tmp;
+        let path = tmp.into_path();
         Self {
             rusk,
             wallet,
