@@ -81,7 +81,6 @@ impl Rusk {
         }
         let mut base_commit = [0u8; 32];
         base_commit.copy_from_slice(&base_commit_bytes);
-        println!("BASE COMMIT READ FROM state.id = {:x?}", base_commit);
 
         let vm = Arc::new(rusk_abi::new_vm(dir)?);
 
@@ -486,14 +485,6 @@ impl Rusk {
         base: [u8; 32],
         to_delete: Vec<[u8; 32]>,
     ) {
-        let del_str: Vec<String> =
-            to_delete.iter().map(|a| hex::encode(a)).collect();
-        println!(
-            "SET_BASE_AND_DELETE base={} delete={:?}",
-            hex::encode(base),
-            del_str
-        );
-
         self.tip.write().base = base.clone();
         task::spawn(finalize_commit(self.vm.clone(), base));
 
