@@ -129,7 +129,6 @@ fn wallet_transfer(
 }
 
 #[tokio::test(flavor = "multi_thread")]
-#[ignore]
 pub async fn wallet() -> Result<()> {
     // Setup the logger
     logger();
