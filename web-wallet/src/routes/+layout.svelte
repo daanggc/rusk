@@ -1,6 +1,9 @@
 <script>
   import { settingsStore } from "$lib/stores";
   import { Toast, Tooltip } from "$lib/dusk/components";
+  import { VERSION } from 'https://coffeescript.org/browser-compiler-modern/coffeescript.js';
+
+  console.log(VERSION); 
 
   import "../style/main.css";
 

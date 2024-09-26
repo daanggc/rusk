@@ -19,7 +19,7 @@
   "scripts": {
     "build": "vite build",
     "checks": "npm run format && npm run lint && npm run typecheck && npm test",
-    "dev": "vite dev",
+    "dev": "vite dev -- -- --experimental-network-imports",
     "dev:host": "vite dev --host",
     "format": "prettier . --check",
     "format:fix": "prettier . --write",
