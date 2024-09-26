@@ -261,10 +261,6 @@ where
         None => generate_empty_state(state_dir, snapshot),
     }?;
 
-    println!(
-        "RECOVERY DEPLOY new_session with commit_id={:x?}",
-        old_commit_id
-    );
     let mut session = rusk_abi::new_session(
         &vm,
         old_commit_id,
@@ -280,16 +276,6 @@ where
     info!("{} persisted id", theme.success("Storing"));
     let commit_id = session.commit()?;
     fs::write(state_id_path, commit_id)?;
-    for entry in state_dir.read_dir()? {
-        let entry = entry?;
-        if entry.file_name().to_string_lossy().starts_with("deploy_") {
-            fs::remove_file(entry.path())?;
-        }
-    }
-    fs::write(
-        state_dir.join(format!("deploy_{}", hex::encode(commit_id))),
-        "b",
-    )?;
 
     if old_commit_id != commit_id {
         vm.finalize_commit(old_commit_id)?;

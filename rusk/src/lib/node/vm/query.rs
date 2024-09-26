@@ -27,7 +27,6 @@ impl Rusk {
     {
         // For queries we set a point limit of effectively infinite and a block
         // height of zero since this doesn't affect the result.
-        println!("QUERY RAW");
         let mut session = self.session(0, None)?;
 
         session
@@ -74,7 +73,6 @@ impl Rusk {
     {
         // For queries we set a point limit of effectively infinite and a block
         // height of zero since this doesn't affect the result.
-        println!("QUERY SEQ");
         let mut session = self.session(0, None)?;
 
         let mut result = session
@@ -106,7 +104,6 @@ impl Rusk {
     {
         // For queries we set a point limit of effectively infinite and a block
         // height of zero since this doesn't affect the result.
-        println!("FEEDER_QUERY {:x?}", base_commit);
         let mut session = self.session(0, base_commit)?;
 
         session.feeder_call::<_, ()>(
@@ -133,7 +130,6 @@ impl Rusk {
     {
         // For queries we set a point limit of effectively infinite and a block
         // height of zero since this doesn't affect the result.
-        println!("FEEDER_QUERY_RAW");
         let mut session = self.session(0, None)?;
 
         session.feeder_call_raw(

@@ -137,10 +137,6 @@ impl<DB: database::DB, VM: vm::VMExecution, N: Network> Acceptor<N, DB, VM> {
     ) -> anyhow::Result<Self> {
         let tip_height = tip.inner().header().height;
         let tip_state_hash = tip.inner().header().state_hash;
-        println!(
-            "INIT_CONSENSUS tip_height={} state_hash={:x?}",
-            tip_height, tip_state_hash
-        );
 
         let mut provisioners_list = ContextProvisioners::new(provisioners_list);
 
@@ -173,9 +169,6 @@ impl<DB: database::DB, VM: vm::VMExecution, N: Network> Acceptor<N, DB, VM> {
         );
 
         if tip_height > 0 && tip_state_hash != state_root {
-            println!("INIT_CONSENSUS tip_state_hash != state_root");
-            println!("INIT_CONSENSUS tip_state_hash = {:x?}", tip_state_hash);
-            println!("INIT_CONSENSUS state_root = {:x?}", state_root);
             if let Err(error) = vm.read().await.move_to_commit(tip_state_hash) {
                 warn!(
                     event = "Cannot move to tip_state_hash",
@@ -192,8 +185,6 @@ impl<DB: database::DB, VM: vm::VMExecution, N: Network> Acceptor<N, DB, VM> {
                     state_root = hex::encode(tip_state_hash),
                 );
             }
-        } else {
-            println!("INIT_CONSENSUS move_to_commit NOT DONE");
         }
 
         Ok(acc)
