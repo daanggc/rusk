@@ -220,9 +220,7 @@ const duskAPI = {
    * @returns {Promise<NodeInfo>}
    */
   getNodeInfo() {
-    return nodePost("/on/node/info").then((res) => {
-      return res;
-    });
+    return nodePost("/on/node/info");
   },
 
   /**

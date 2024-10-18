@@ -43,7 +43,7 @@ type NodeLocationStoreContent = {
 };
 
 type NodeInfo = {
-  bootstrapping_nodes: Array<[]>;
+  bootstrapping_nodes: Array<string>;
   chain_id: number | null | undefined;
   kadcast_address: string;
   version: string;
