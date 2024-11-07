@@ -1,22 +1,59 @@
-[![Rusk CI](https://github.com/dusk-network/rusk/actions/workflows/rusk_ci.yml/badge.svg)](https://github.com/dusk-network/rusk/actions/workflows/rusk_ci.yml)
-[![explorer CI](https://github.com/dusk-network/rusk/actions/workflows/explorer_ci.yml/badge.svg)](https://github.com/dusk-network/rusk/actions/workflows/explorer_ci.yml)
-[![web-wallet CI](https://github.com/dusk-network/rusk/actions/workflows/webwallet_ci.yml/badge.svg)](https://github.com/dusk-network/rusk/actions/workflows/webwallet_ci.yml)
-[![codecov](https://codecov.io/gh/dusk-network/rusk/branch/master/graph/badge.svg)](https://codecov.io/gh/dusk-network/rusk)
+<h1 align="center">
+<img height="90" src="assets/rusk_logo_light.svg#gh-dark-mode-only" alt="Rusk">
+<img height="90" src="assets/rusk_logo_dark.svg#gh-light-mode-only" alt="Rusk">
+</h1>
 
-# Rusk
+<p align="center">
+  The official <img height="11" src="assets/dusk_circular_light.svg#gh-dark-mode-only"><img height="11" src="assets/dusk_circular_dark.svg#gh-light-mode-only"><a href="https://dusk.network/"> Dusk</a> protocol node client and smart contract platform.
+</p>
 
-The official [Dusk](https://dusk.network/) protocol node client and smart contract platform.
+<p align=center>
+<a href="https://github.com/dusk-network/rusk/actions/workflows/rusk_ci.yml">
+<img src="https://github.com/dusk-network/rusk/actions/workflows/rusk_ci.yml/badge.svg" alt="Rusk CI"></a>
+&nbsp;
+<a href="https://github.com/dusk-network/rusk/actions/workflows/explorer_ci.yml">
+<img src="https://github.com/dusk-network/rusk/actions/workflows/explorer_ci.yml/badge.svg" alt="explorer CI"></a>
+&nbsp;
+<a href="https://github.com/dusk-network/rusk/actions/workflows/webwallet_ci.yml">
+<img src="https://github.com/dusk-network/rusk/actions/workflows/webwallet_ci.yml/badge.svg" alt="web-wallet CI"></a>
 
-_Unstable_ : No guarantees can be made regarding the API stability, the project
-is in development.
+more badges:
+- discord chat online
+- CTA to star repo
+- built with rust
+- license mpl
+</p>
 
+
+<p align="center">
+	<a href="https://dusk.network/news" target="_blank"><img height="25" src="assets/dusk_circular_light.svg" alt="News"></a><img height="11" src="assets/dusk_circular_dark.svg#gh-light-mode-only">
+	&nbsp;
+	<a href="https://github.com/dusk-network" target="_blank"><img height="25" src="assets/icons/github_mark.svg" alt="Github	"></a>
+	&nbsp;
+    <a href="https://www.linkedin.com/company/dusknetwork" target="_blank"><img height="25" src="assets/icons/linkedin.svg" alt="LinkedIn"></a>
+    &nbsp;
+    <a href="https://x.com/DuskFoundation" target="_blank"><img height="25" src="assets/icons/x_logo.svg" alt="X"></a>
+    &nbsp;
+    <a href="https://t.me/DuskNetwork" target="_blank"><img height=25 src="assets/icons/telegram.svg" alt="Telegram"></a>
+    &nbsp;
+    <a href="https://discord.gg/dusk-official" target="_blank"><img height="25" src="assets/icons/discord.svg" alt="Discord"></a>
+</p>
+
+> _Unstable_ : No guarantees can be made regarding the API stability, the project is in development.
+
+# Table of Contents
+- Run a node
+  - Without docker
+  - With docker
 ## How to run a node
 
 For more information on running a node, see our docs: 
 - [Node Setup](https://docs.dusk.network/getting-started/node-setup/overview)
 - [Node Requirements](https://docs.dusk.network/getting-started/node-setup/node-requirements)
 
-## Prerequisites
+## Run a local node for development
+
+### Prerequisites
 
 - Rust 1.71 nightly or higher
 - GCC 13 or higher
@@ -47,32 +84,31 @@ To run tests:
 make test
 ```
 
-That will also compile all the genesis contracts and its associated circuits.
+That will also compile all the genesis contracts and its associated circuits. See also `make help` for all the available commands
 
-## Use
 
-Prerequisites:
-
-```bash
-# Generate the keys used by the circuits
-make keys
-
-# Compile all the genesis contracts
-make wasm
-
-# Copy example consensus.keys
-mkdir -p ~/.dusk/rusk
-cp examples/consensus.keys ~/.dusk/rusk/consensus.keys
-```
+## Run a local node for development
 
 Run a single full-node cluster with example state.
 
-```bash
-# Generate genesis state
-cargo r --release -p rusk -- recovery state --init examples/genesis.toml -o /tmp/example.state
+### Prerequisites:
 
+```bash
+# Generate the keys used by the circuits
+# Compile all the genesis contracts
+# Copy example consensus.keys
+make prepare-dev
+```
+### Node
+
+```bash
 # Launch a local ephemeral node
-DUSK_CONSENSUS_KEYS_PASS=password cargo r --release -p rusk -- -s /tmp/example.state
+make run-dev
+```
+### Archive node
+
+```bash
+make run-dev-archive
 ```
 
 ### Prover Node
@@ -86,20 +122,17 @@ This prover node will be accessible on `https://localhost:8080`. Apps like the [
 
 ## Contracts compilation
 
-To just compile all the genesis contracts without running the server:
+Compile all the genesis contracts without running the server:
 
 ```bash
 make contracts
 ```
-
-To generate a specific genesis contract:
+Compile a specific genesis contract:
 
 ```bash
 # generate the wasm for `transfer` contract
 make wasm for=transfer
 ```
-
-See also `make help` for all the available commands
 
 ## Docker support
 
