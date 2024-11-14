@@ -1,0 +1,46 @@
+.dusk-banner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 1em 1.25em;
+  border-radius: 12px;
+  font-size: 0.875em;
+  border-style: solid;
+  border-width: 1px;
+  line-height: 1.5;
+}
+
+.dusk-banner .dusk-banner--info {
+  border-color: var(--banner-info-color);
+}
+
+.dusk-banner .dusk-banner--warning {
+  border-color: var(--banner-warning-color);
+}
+
+.dusk-banner .dusk-banner--error {
+  border-color: var(--banner-error-color);
+}
+
+.dusk-banner .dusk-banner__title {
+  font-weight: 500;
+  font-size: 1.1em;
+  display: block;
+}
+
+.dusk-banner .dusk-banner__icon {
+  margin-right: var(--default-gap);
+  flex-shrink: 0;
+}
+
+.dusk-banner .dusk-banner__icon--info {
+  fill: var(--banner-info-color);
+}
+
+.dusk-banner .dusk-banner__icon--warning {
+  fill: var(--banner-warning-color);
+}
+
+.dusk-banner .dusk-banner__icon--error {
+  fill: var(--banner-error-color);
+}

@@ -37,3 +37,8 @@
 .data-card__progress-bar .dusk-progress-bar__filler {
   background-color: var(--primary-color);
 }
+
+.data-card__banner {
+  margin: 0 1.125rem 1.125rem 1.125rem;
+  width: auto;
+}

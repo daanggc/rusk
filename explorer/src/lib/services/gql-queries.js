@@ -87,6 +87,12 @@ export const getLatestChainQueryInfo = (amount) => ({
 });
 
 /** @param {string} id */
+export const getMempoolTx = (id) => ({
+  query: "query($id: String!) { mempoolTx(hash: $id) { json } }",
+  variables: { id },
+});
+
+/** @param {string} id */
 export const getTransactionQueryInfo = (id) => ({
   query: `
     ${transactionFragment}

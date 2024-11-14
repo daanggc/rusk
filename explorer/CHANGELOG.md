@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add decode feature for `memo` field [#2527]
 - Add top node info in StatisticsPanel [#2613]
 - Add Provisioners page [#2649]
+- Check if transaction exists in mempool [#2877]
 
 ### Changed
 
@@ -92,6 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [#2613]: https://github.com/dusk-network/rusk/issues/2613
 [#2649]: https://github.com/dusk-network/rusk/issues/2649
 [#2662]: https://github.com/dusk-network/rusk/issues/2662
+[#2877]: https://github.com/dusk-network/rusk/issues/2877
 
 <!-- VERSIONS -->
 
