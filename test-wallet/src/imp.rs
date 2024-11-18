@@ -459,21 +459,12 @@ where
         let mut phoenix_sender_sk = self.phoenix_secret_key(sender_index)?;
         let mut stake_sk = self.account_secret_key(staker_index)?;
 
-        let stake_pk = BlsPublicKey::from(&stake_sk);
-
         let inputs = self.input_notes_openings(
             &phoenix_sender_sk,
             gas_limit * gas_price + stake_value,
         )?;
 
         let root = self.state.fetch_root().map_err(Error::from_state_err)?;
-
-        let current_nonce = self
-            .state
-            .fetch_stake(&stake_pk)
-            .map_err(Error::from_state_err)?
-            .nonce
-            + 1;
 
         let chain_id =
             self.state.fetch_chain_id().map_err(Error::from_state_err)?;
@@ -488,7 +479,6 @@ where
             gas_price,
             chain_id,
             stake_value,
-            current_nonce,
             &LocalProver,
         )?;
 
@@ -779,15 +769,10 @@ where
         let sender_pk = self.account_public_key(sender_index)?;
 
         let mut staker_sk = self.account_secret_key(staker_index)?;
-        let staker_pk = self.account_public_key(staker_index)?;
 
         let sender_account = self
             .state
             .fetch_account(&sender_pk)
-            .map_err(Error::from_state_err)?;
-        let staker_data = self
-            .state
-            .fetch_stake(&staker_pk)
             .map_err(Error::from_state_err)?;
 
         let chain_id =
@@ -800,7 +785,6 @@ where
             gas_limit,
             gas_price,
             sender_account.nonce + 1,
-            staker_data.nonce + 1,
             chain_id,
         )?;
 
