@@ -27,7 +27,7 @@ use rusk_abi::{CallReceipt, ContractData, Session};
 use rusk_recovery_tools::state;
 use tempfile::tempdir;
 use test_wallet::{self as wallet, Wallet};
-use tokio::sync::broadcast;
+use tokio::sync::{broadcast, mpsc};
 use tracing::info;
 
 use crate::common::logger;
@@ -76,7 +76,9 @@ fn initial_state<P: AsRef<Path>>(
     })
     .expect("Deploying initial state should succeed");
 
-    let (sender, _) = broadcast::channel(10);
+    let (event_sender, _) = broadcast::channel(10);
+    #[cfg(feature = "archive")]
+    let (archive_sender, _) = mpsc::channel(1000);
 
     let rusk = Rusk::new(
         dir,
@@ -87,7 +89,9 @@ fn initial_state<P: AsRef<Path>>(
         DEFAULT_MIN_GAS_LIMIT,
         BLOCK_GAS_LIMIT,
         u64::MAX,
-        sender,
+        event_sender,
+        #[cfg(feature = "archive")]
+        archive_sender,
     )
     .expect("Instantiating rusk should succeed");
     Ok(rusk)

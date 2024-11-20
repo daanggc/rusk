@@ -92,7 +92,17 @@ criterion = { workspace = true }
 rustc_tools_util = { workspace = true }
 
 [features]
+# Default features include all the components of the rusk node, also the archive
 default = [
+    "ephemeral",
+    "recovery-state",
+    "recovery-keys",
+    "prover",
+    "http-wasm",
+    "archive",
+]
+# Default features without the archive
+default-without-archive = [
     "ephemeral",
     "recovery-state",
     "recovery-keys",

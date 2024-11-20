@@ -26,7 +26,7 @@ use node_data::{
     message::payload::Vote,
 };
 
-use tokio::sync::broadcast;
+use tokio::sync::{broadcast, mpsc};
 use tracing::info;
 
 const CHAIN_ID: u8 = 0xFA;
@@ -55,7 +55,10 @@ pub fn new_state_with_chainid<P: AsRef<Path>>(
     let (_, commit_id) = state::deploy(dir, snapshot, |_| {})
         .expect("Deploying initial state should succeed");
 
-    let (sender, _) = broadcast::channel(10);
+    let (event_sender, _) = broadcast::channel(10);
+
+    #[cfg(feature = "archive")]
+    let (archive_sender, _) = mpsc::channel(1000);
 
     let rusk = Rusk::new(
         dir,
@@ -66,7 +69,9 @@ pub fn new_state_with_chainid<P: AsRef<Path>>(
         DEFAULT_MIN_GAS_LIMIT,
         block_gas_limit,
         u64::MAX,
-        sender,
+        event_sender,
+        #[cfg(feature = "archive")]
+        archive_sender,
     )
     .expect("Instantiating rusk should succeed");
 

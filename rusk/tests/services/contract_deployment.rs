@@ -97,7 +97,9 @@ fn initial_state<P: AsRef<Path>>(dir: P, deploy_bob: bool) -> Result<Rusk> {
     })
     .expect("Deploying initial state should succeed");
 
-    let (sender, _) = broadcast::channel(10);
+    let (event_sender, _) = broadcast::channel(10);
+    #[cfg(feature = "archive")]
+    let (archive_sender, _) = tokio::sync::mpsc::channel(1000);
 
     let rusk = Rusk::new(
         dir,
@@ -108,7 +110,9 @@ fn initial_state<P: AsRef<Path>>(dir: P, deploy_bob: bool) -> Result<Rusk> {
         DEFAULT_MIN_GAS_LIMIT,
         BLOCK_GAS_LIMIT,
         u64::MAX,
-        sender,
+        event_sender,
+        #[cfg(feature = "archive")]
+        archive_sender,
     )
     .expect("Instantiating rusk should succeed");
     Ok(rusk)
