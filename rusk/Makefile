@@ -48,7 +48,10 @@ doc: ## Run doc gen
 	@cargo doc --release
 
 build: ## Build rusk binary
-	@cargo build --release
+	@cargo build --release --no-default-features --features default-without-archive
+
+build-archive: ## Build rusk binary with archive
+	@cargo build --release --features default
 
 build-bench: ## Build the benchmarks
 	@cargo bench --features testwallet --no-run

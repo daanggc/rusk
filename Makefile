@@ -90,7 +90,12 @@ run-dev-archive: ## Launch a local ephemeral archive node for development
 	echo "Failed to start the node. Make sure you have run 'make prepare-dev' before running this command"
 
 rusk: keys state web-wallet ## Build rusk binary
+	@echo "Building rusk binary (without archive)"
 	$(MAKE) -C ./rusk build
+
+rusk-archive: keys state web-wallet ## Build rusk binary with archive
+	@echo "Building rusk binary (with archive)"
+	$(MAKE) -C ./rusk build-archive
 
 rusk-wallet: ## build the rusk wallet binary
 	$(MAKE) -C ./rusk-wallet build 
