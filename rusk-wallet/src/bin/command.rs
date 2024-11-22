@@ -194,6 +194,10 @@ pub(crate) enum Command {
         #[arg(short, long)]
         address: Option<Address>,
 
+        /// Amount of rewards to withdraw from the stake contract
+        #[arg(short, long)]
+        reward: Dusk,
+
         /// Max amount of gas for this transaction
         #[arg(short = 'l', long, default_value_t = DEFAULT_LIMIT_CALL)]
         gas_limit: u64,
@@ -435,6 +439,7 @@ impl Command {
             }
             Command::Withdraw {
                 address,
+                reward,
                 gas_limit,
                 gas_price,
             } => {
@@ -445,10 +450,14 @@ impl Command {
                 let tx = match address {
                     Address::Shielded(_) => {
                         wallet.sync().await?;
-                        wallet.phoenix_stake_withdraw(addr_idx, gas).await
+                        wallet
+                            .phoenix_stake_withdraw(addr_idx, reward, gas)
+                            .await
                     }
                     Address::Public(_) => {
-                        wallet.moonlight_stake_withdraw(addr_idx, gas).await
+                        wallet
+                            .moonlight_stake_withdraw(addr_idx, reward, gas)
+                            .await
                     }
                 }?;
 
