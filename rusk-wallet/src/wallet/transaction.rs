@@ -457,7 +457,7 @@ impl<F: SecureWalletFile + Debug> Wallet<F> {
 
         // throw error if we try to withdraw more than available
         if reward_amt > available_reward {
-            return Err(Error::NotEnoughBalance);
+            return Err(Error::NotEnoughReward);
         }
 
         let withdraw = phoenix_stake_reward(
@@ -499,7 +499,7 @@ impl<F: SecureWalletFile + Debug> Wallet<F> {
 
         // throw error if we try to withdraw more than available
         if reward_amt > available_reward {
-            return Err(Error::NotEnoughBalance);
+            return Err(Error::NotEnoughReward);
         }
 
         let mut sender_sk = self.derive_bls_sk(sender_idx);
